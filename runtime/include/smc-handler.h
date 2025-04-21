@@ -36,7 +36,7 @@ unsigned long smc_realm_activate(unsigned long rd_addr);
 
 unsigned long smc_realm_create(unsigned long rd_addr,
 				unsigned long realm_params_addr,
-			unsigned long a);
+			unsigned long owner_pubkey_hash);
 
 unsigned long smc_realm_destroy(unsigned long rd_addr);
 

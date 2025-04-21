@@ -342,7 +342,7 @@ out_err:
 // 
 unsigned long smc_realm_create(unsigned long rd_addr,
 			       unsigned long realm_params_addr,
-				unsigned long a)
+				unsigned long owner_pubkey_hash)
 {
 	struct granule *g_rd, *g_rtt_base;
 	struct rd *rd;

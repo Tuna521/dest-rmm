@@ -11,7 +11,7 @@
 void host_rmi_version(unsigned long rmi_verion, struct smc_result *res);
 void host_rmi_granule_delegate(void *granule_address, struct smc_result *res);
 void host_rmi_granule_undelegate(void *granule_address, struct smc_result *res);
-void host_rmi_realm_create(void *rd, void *params_ptr,  void *a, struct smc_result *res);
+void host_rmi_realm_create(void *rd, void *params_ptr,  void *owner_pubkey_hash, struct smc_result *res);
 void host_rmi_realm_destroy(void *rd, struct smc_result *res);
 void host_rmi_rtt_create(void *rd, void *rtt, void *ipa,
 			 unsigned int level, struct smc_result *res);
