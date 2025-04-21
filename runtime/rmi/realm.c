@@ -335,8 +335,14 @@ out_err:
 	return false;
 }
 
+// TODO: HERE
+// add a new param - owner pubkey hash [32]
+// make it into bool owner registered
+// create a new function maybe in something specific???
+// 
 unsigned long smc_realm_create(unsigned long rd_addr,
-			       unsigned long realm_params_addr)
+			       unsigned long realm_params_addr,
+				unsigned long a)
 {
 	struct granule *g_rd, *g_rtt_base;
 	struct rd *rd;

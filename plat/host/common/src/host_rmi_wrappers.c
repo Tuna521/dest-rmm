@@ -39,12 +39,13 @@ void host_rmi_granule_undelegate(void *granule_address, struct smc_result *res)
 		res);
 }
 
-void host_rmi_realm_create(void *rd, void *params_ptr, struct smc_result *res)
+void host_rmi_realm_create(void *rd, void *params_ptr, void *a, struct smc_result *res)
 {
 	handle_ns_smc(SMC_RMM_REALM_CREATE,
 		(uintptr_t)rd,
 		(uintptr_t)params_ptr,
-		0, 0, 0, 0,
+		(uintptr_t)a, 
+		0, 0, 0,
 		res);
 }
 

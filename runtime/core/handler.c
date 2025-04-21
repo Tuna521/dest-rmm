@@ -127,12 +127,13 @@ struct smc_handler {
  * The 3rd value enables the execution log.
  * The 4th value enables the error log.
  */
+// TODO: change it to different int
 static const struct smc_handler smc_handlers[] = {
 	HANDLER(VERSION,		1, 2, smc_version,		 true,  true),
 	HANDLER(FEATURES,		1, 1, smc_read_feature_register, true,  true),
 	HANDLER(GRANULE_DELEGATE,	1, 0, smc_granule_delegate,	 false, true),
 	HANDLER(GRANULE_UNDELEGATE,	1, 0, smc_granule_undelegate,	 false, true),
-	HANDLER(REALM_CREATE,		2, 0, smc_realm_create,		 true,  true),
+	HANDLER(REALM_CREATE,		3, 0, smc_realm_create,		 true,  true),
 	HANDLER(REALM_DESTROY,		1, 0, smc_realm_destroy,	 true,  true),
 	HANDLER(REALM_ACTIVATE,		1, 0, smc_realm_activate,	 true,  true),
 	HANDLER(REC_CREATE,		3, 0, smc_rec_create,		 true,  true),
@@ -158,7 +159,7 @@ COMPILER_ASSERT(ARRAY_LEN(smc_handlers) == SMC64_NUM_FIDS_IN_RANGE(RMI));
 static inline bool rmi_handler_needs_fpu(unsigned int id)
 {
 #ifdef RMM_FPU_USE_AT_REL2
-	if ((id == SMC_RMM_REALM_CREATE) || (id == SMC_RMM_DATA_CREATE) ||
+	if ((id == ) || (id == SMC_RMM_DATA_CREATE) ||
 	    (id == SMC_RMM_REC_CREATE) || (id == SMC_RMM_RTT_INIT_RIPAS)) {
 		return true;
 	}
