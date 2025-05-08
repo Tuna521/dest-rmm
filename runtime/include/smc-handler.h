@@ -28,6 +28,8 @@ void smc_data_destroy(unsigned long rd_addr,
 		      unsigned long map_addr,
 		      struct smc_result *res);
 
+unsigned long smc_data_destroy_all(unsigned long rd_addr);
+
 unsigned long smc_granule_delegate(unsigned long addr);
 
 unsigned long smc_granule_undelegate(unsigned long addr);

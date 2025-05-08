@@ -380,6 +380,7 @@ unsigned long smc_realm_create(unsigned long rd_addr,
 	set_rd_rec_count(rd, 0UL);
 	rd->s2_ctx.g_rtt = find_granule(p.rtt_base);
 	rd->s2_ctx.ipa_bits = p.s2sz;
+	INFO("ipa_bits: %d\n", rd->s2_ctx.ipa_bits);
 	rd->s2_ctx.s2_starting_level = (int)p.rtt_level_start;
 	rd->s2_ctx.num_root_rtts = p.rtt_num_start;
 	(void)memcpy(&rd->rpv[0], &p.rpv[0], RPV_SIZE);

@@ -365,6 +365,13 @@
  */
 #define SMC_RMM_RTT_SET_RIPAS			SMC64_RMI_FID(U(0x19))
 
+/*
+ * arg0 == RD address
+ *
+ * ret0 == Command return status
+ */
+#define SMC_RMM_DATA_DESTROY_ALL		SMC64_RMI_FID(U(0x1A))
+
 /* Size of Realm Personalization Value */
 #define RPV_SIZE		64
 

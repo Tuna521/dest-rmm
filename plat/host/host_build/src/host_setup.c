@@ -170,7 +170,7 @@ static int create_realm(void)
 	CHECK_RMI_RESULT();
 	host_rmi_granule_delegate(rec, &result);
 	CHECK_RMI_RESULT();
-	for (i = 0; i < RTT_COUNT; ++i) {
+	for (i = 0; i < MAX_REC_AUX_GRANULES; ++i) {
 		rtts[i] = allocate_granule();
 		host_rmi_granule_delegate(rtts[i], &result);
 		CHECK_RMI_RESULT();

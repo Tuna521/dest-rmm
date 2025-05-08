@@ -158,3 +158,11 @@ void host_rmi_data_destroy(void *rd, uintptr_t ipa, struct smc_result *res)
 		0, 0, 0, 0,
 		res);
 }
+
+void host_rmi_data_destroy_all(void *rd, struct smc_result *res)
+{
+	handle_ns_smc(SMC_RMM_DATA_DESTROY_ALL,
+		(uintptr_t)rd,
+		0, 0, 0, 0, 0,
+		res);
+}
