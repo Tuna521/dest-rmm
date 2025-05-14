@@ -19,6 +19,9 @@
 #include <table.h>
 #include <vmid.h>
 
+/* External function declarations */
+extern unsigned long smc_data_destroy_all(unsigned long rd_addr);
+
 #define RMM_FEATURE_MIN_IPA_SIZE	PARANGE_0000_WIDTH
 
 unsigned long smc_realm_activate(unsigned long rd_addr)
@@ -44,6 +47,11 @@ unsigned long smc_realm_activate(unsigned long rd_addr)
 	buffer_unmap(rd);
 
 	granule_unlock(g_rd);
+
+	// Test smc_data_destroy_all
+	INFO("Testing smc_data_destroy_all for rd_addr: %lx\n", rd_addr);
+	unsigned long destroy_ret = smc_data_destroy_all(rd_addr);
+	INFO("smc_data_destroy_all returned: %lx\n", destroy_ret);
 
 	return ret;
 }

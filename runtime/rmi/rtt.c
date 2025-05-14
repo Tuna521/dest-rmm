@@ -1127,6 +1127,7 @@ out_unmap_ll_table:
 
 unsigned long smc_data_destroy_all(unsigned long rd_addr)
 {
+	INFO("Destroying all data in RTT\n");
 	struct granule *g_rd;
 	struct granule *g_table_root;
 	struct rd *rd;
@@ -1135,40 +1136,72 @@ unsigned long smc_data_destroy_all(unsigned long rd_addr)
 	unsigned long ipa_bits;
 	struct realm_s2_context s2_ctx;
 	unsigned long addr = 0UL;
+	unsigned long ipa_size;
 	int sl;
 
 	// Lock and validate RD
+	INFO("Finding RD granule at address: %lx\n", rd_addr);
 	g_rd = find_lock_granule(rd_addr, GRANULE_STATE_RD);
 	if (g_rd == NULL) {
+		INFO("RD granule not found or not in expected state\n");
+		return RMI_ERROR_INPUT;
+	}
+	INFO("Found RD granule, mapping it\n");
+
+	// Map RD
+	rd = granule_map(g_rd, SLOT_RD);
+	if (rd == NULL) {
+		INFO("Failed to map RD granule\n");
+		granule_unlock(g_rd);
 		return RMI_ERROR_INPUT;
 	}
 
-	rd = granule_map(g_rd, SLOT_RD);
-	assert(rd != NULL);
-
 	// Get RTT info
 	g_table_root = rd->s2_ctx.g_rtt;
+	if (g_table_root == NULL) {
+		INFO("RTT root is NULL\n");
+		buffer_unmap(rd);
+		granule_unlock(g_rd);
+		return RMI_ERROR_INPUT;
+	}
+	
 	sl = realm_rtt_starting_level(rd);
 	ipa_bits = realm_ipa_bits(rd);
+	ipa_size = realm_ipa_size(rd);
+	INFO("RTT starting level: %d, IPA bits: %lu, IPA size: %lx\n", sl, ipa_bits, ipa_size);
 	s2_ctx = rd->s2_ctx;
 	buffer_unmap(rd);
 
 	// Lock RTT root and unlock RD
+	INFO("Locking RTT root granule\n");
 	granule_lock(g_table_root, GRANULE_STATE_RTT);
 	granule_unlock(g_rd);
+	
+	INFO("Entering main loop\n");
 
 	// Traverse entire IPA space
-	while (addr < realm_ipa_size(rd)) {
+	while (addr < ipa_size) {
 		// Walk through RTT starting from page level
+		INFO("Processing address: %lx, IPA size: %lx\n", addr, ipa_size);
+
 		rtt_walk_lock_unlock(g_table_root, sl, ipa_bits,
 							addr, RTT_PAGE_LEVEL, &wi);
+		INFO("After rtt_walk_lock_unlock: last_level=%ld, index=%lu\n", wi.last_level, wi.index);
 
 		// Map the last level table
+		INFO("Before granule_map\n");
 		s2tt = granule_map(wi.g_llt, SLOT_RTT);
-		assert(s2tt != NULL);
+		if (s2tt == NULL) {
+			INFO("granule_map returned NULL\n");
+			granule_unlock(wi.g_llt);
+			return RMI_ERROR_INPUT;
+		}
+		INFO("After granule_map\n");
 
 		// Read the stage 2 translation table entry
+		INFO("Reading s2tte at index %lu\n", wi.index);
 		s2tte = s2tte_read(&s2tt[wi.index]);
+		INFO("Read s2tte: %lx\n", s2tte);
 
 		// If we found a data granule, destroy it
 		if (s2tte_is_assigned_ram(s2tte, RTT_PAGE_LEVEL)) {
@@ -1184,26 +1217,40 @@ unsigned long smc_data_destroy_all(unsigned long rd_addr)
 			// Decrement ref count of last level table
 			__granule_put(wi.g_llt);
 
-			// Lock and zero the data granule
-			g_data = find_lock_granule(data_addr, GRANULE_STATE_DATA);
-			assert(g_data != NULL);
-			granule_memzero(g_data, SLOT_DELEGATED);
-			granule_unlock_transition(g_data, GRANULE_STATE_DELEGATED);
+			// Lock and zero the data granule - with error handling
+			g_data = find_granule(data_addr);
+			if (g_data != NULL) {
+				if (granule_lock_on_state_match(g_data, GRANULE_STATE_DATA)) {
+					granule_memzero(g_data, SLOT_DELEGATED);
+					granule_unlock_transition(g_data, GRANULE_STATE_DELEGATED);
+				} else {
+					INFO("Data granule at %lx not in expected state\n", data_addr);
+				}
+			} else {
+				INFO("Failed to find data granule at %lx\n", data_addr);
+			}
 		}
 
 		// Get next address by skipping non-live entries
+		INFO("Before skip_non_live_entries\n");
 		addr = skip_non_live_entries(addr, s2tt, &wi);
+		INFO("After skip_non_live_entries, new addr: %lx\n", addr);
 		
 		// Clean up current table
+		INFO("Before buffer_unmap\n");
 		buffer_unmap(s2tt);
+		INFO("Before granule_unlock\n");
 		granule_unlock(wi.g_llt);
+		INFO("After cleanup\n");
 
 		// If we've reached the end of IPA space, break
-		if (addr >= realm_ipa_size(rd)) {
+		if (addr >= ipa_size) {
+			INFO("Reached end of IPA space\n");
 			break;
 		}
 	}
 
+	INFO("Completed main loop\n");
 	return RMI_SUCCESS;
 }
 
