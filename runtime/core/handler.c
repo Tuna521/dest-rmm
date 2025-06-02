@@ -139,9 +139,8 @@ static const struct smc_handler smc_handlers[] = {
 	HANDLER(REC_DESTROY,		1, 0, smc_rec_destroy,		 true,  true),
 	HANDLER(REC_ENTER,		2, 0, smc_rec_enter,		 false, true),
 	HANDLER(DATA_CREATE,		5, 0, smc_data_create,		 true, false),
-	HANDLER(DATA_CREATE_UNKNOWN,	3, 0, smc_data_create_unknown,	 true, false),
+	HANDLER(DATA_CREATE_UNKNOWN,	3, 0, smc_data_create_unknown,	 false, false),
 	HANDLER(DATA_DESTROY,		2, 2, smc_data_destroy,		 true, true),
-	HANDLER(DATA_DESTROY_ALL,	1, 0, smc_data_destroy_all,	 true, true),
 	HANDLER(RTT_CREATE,		4, 0, smc_rtt_create,		 true, true),
 	HANDLER(RTT_DESTROY,		3, 2, smc_rtt_destroy,		 true, true),
 	HANDLER(RTT_FOLD,		3, 1, smc_rtt_fold,		 false, false),
@@ -151,7 +150,8 @@ static const struct smc_handler smc_handlers[] = {
 	HANDLER(PSCI_COMPLETE,		3, 0, smc_psci_complete,	 true,  true),
 	HANDLER(REC_AUX_COUNT,		1, 1, smc_rec_aux_count,	 true,  true),
 	HANDLER(RTT_INIT_RIPAS,		3, 1, smc_rtt_init_ripas,	 false, true),
-	HANDLER(RTT_SET_RIPAS,		4, 1, smc_rtt_set_ripas,	 false, true)
+	HANDLER(RTT_SET_RIPAS,		4, 1, smc_rtt_set_ripas,	 false, true),
+	HANDLER(DATA_DESTROY_ALL,	1, 0, smc_data_destroy_all,	 true, true)
 };
 
 COMPILER_ASSERT(ARRAY_LEN(smc_handlers) == SMC64_NUM_FIDS_IN_RANGE(RMI));
@@ -251,7 +251,7 @@ void handle_ns_smc(unsigned int function_id,
 		sve_hint = true;
 		function_id &= ~SMC_SVE_HINT;
 	}
-
+	
 	if (IS_SMC64_RMI_FID(function_id)) {
 		handler_id = RMI_HANDLER_ID(function_id);
 		if (handler_id < ARRAY_LEN(smc_handlers)) {

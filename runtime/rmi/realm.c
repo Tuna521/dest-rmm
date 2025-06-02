@@ -20,12 +20,13 @@
 #include <vmid.h>
 
 /* External function declarations */
-extern unsigned long smc_data_destroy_all(unsigned long rd_addr);
+// extern unsigned long smc_data_destroy_all(unsigned long rd_addr);
 
 #define RMM_FEATURE_MIN_IPA_SIZE	PARANGE_0000_WIDTH
 
 unsigned long smc_realm_activate(unsigned long rd_addr)
 {
+	INFO("smc_realm_activate called with rd_addr: %lx\n", rd_addr);
 	struct rd *rd;
 	struct granule *g_rd;
 	unsigned long ret;
@@ -48,10 +49,10 @@ unsigned long smc_realm_activate(unsigned long rd_addr)
 
 	granule_unlock(g_rd);
 
-	// Test smc_data_destroy_all
-	INFO("Testing smc_data_destroy_all for rd_addr: %lx\n", rd_addr);
-	unsigned long destroy_ret = smc_data_destroy_all(rd_addr);
-	INFO("smc_data_destroy_all returned: %lx\n", destroy_ret);
+	// // Test smc_data_destroy_all
+	// INFO("Testing smc_data_destroy_all for rd_addr: %lx\n", rd_addr);
+	// unsigned long destroy_ret = smc_data_destroy_all(rd_addr);
+	// INFO("smc_data_destroy_all returned: %lx\n", destroy_ret);
 
 	return ret;
 }
@@ -392,6 +393,12 @@ unsigned long smc_realm_create(unsigned long rd_addr,
 	rd->s2_ctx.s2_starting_level = (int)p.rtt_level_start;
 	rd->s2_ctx.num_root_rtts = p.rtt_num_start;
 	(void)memcpy(&rd->rpv[0], &p.rpv[0], RPV_SIZE);
+
+	printf("rd->rpv contents:\n");
+	for (int i = 0; i < 64; ++i) {
+		printf("%02X ", rd->rpv[i]);
+	}
+	printf("\n");
 
 	rd->s2_ctx.vmid = (unsigned int)p.vmid;
 
