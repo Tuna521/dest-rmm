@@ -166,3 +166,11 @@ void host_rmi_data_destroy_all(void *rd, struct smc_result *res)
 		0, 0, 0, 0, 0,
 		res);
 }
+
+void host_rmi_rpv_get(void *rd, struct smc_result *res)
+{
+	handle_ns_smc(SMC_RMM_RPV_GET,
+		(uintptr_t)rd,
+		0, 0, 0, 0, 0,
+		res);
+}

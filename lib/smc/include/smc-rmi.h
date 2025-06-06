@@ -372,6 +372,11 @@
  */
 #define SMC_RMM_DATA_DESTROY_ALL		SMC64_RMI_FID(U(0x1A))
 
+/*
+ * arg0 == RD address
+ */
+#define SMC_RMM_RPV_GET		SMC64_RMI_FID(U(0x1B))
+
 /* Size of Realm Personalization Value */
 #define RPV_SIZE		64
 

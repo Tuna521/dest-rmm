@@ -429,6 +429,36 @@ void smc_rec_aux_count(unsigned long rd_addr, struct smc_result *res)
 	res->x[1] = (unsigned long)num_rec_aux;
 }
 
+void smc_rpv_get(unsigned long rd_addr, struct smc_result *res)
+{
+	uint64_t first_rpv_word;
+	struct granule *g_rd;
+	struct rd *rd;
+
+	g_rd = find_lock_granule(rd_addr, GRANULE_STATE_RD);
+	if (g_rd == NULL) {
+		res->x[0] = RMI_ERROR_INPUT;
+		return;
+	}
+
+	rd = granule_map(g_rd, SLOT_RD);
+	assert(rd != NULL);
+
+	printf("rd->rpv contents:\n");
+	for (int i = 0; i < 64; ++i) {
+		printf("%02X ", rd->rpv[i]);
+	}
+	printf("\n");
+	(void)memcpy(&first_rpv_word, rd->rpv, sizeof(uint64_t));
+
+
+	buffer_unmap(rd);
+	granule_unlock(g_rd);
+
+	res->x[0] = RMI_SUCCESS;
+	res->x[1] = (unsigned long)first_rpv_word;
+}
+
 unsigned long smc_psci_complete(unsigned long calling_rec_addr,
 				unsigned long target_rec_addr,
 				unsigned long status)

@@ -151,7 +151,8 @@ static const struct smc_handler smc_handlers[] = {
 	HANDLER(REC_AUX_COUNT,		1, 1, smc_rec_aux_count,	 true,  true),
 	HANDLER(RTT_INIT_RIPAS,		3, 1, smc_rtt_init_ripas,	 false, true),
 	HANDLER(RTT_SET_RIPAS,		4, 1, smc_rtt_set_ripas,	 false, true),
-	HANDLER(DATA_DESTROY_ALL,	1, 0, smc_data_destroy_all,	 true, true)
+	HANDLER(DATA_DESTROY_ALL,	1, 0, smc_data_destroy_all,	 true, true),
+	HANDLER(RPV_GET,		1, 1, smc_rpv_get,		 true, true),
 };
 
 COMPILER_ASSERT(ARRAY_LEN(smc_handlers) == SMC64_NUM_FIDS_IN_RANGE(RMI));

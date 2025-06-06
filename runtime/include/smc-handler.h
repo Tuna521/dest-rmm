@@ -53,6 +53,9 @@ unsigned long smc_rec_enter(unsigned long rec_addr,
 void smc_rec_aux_count(unsigned long rd_addr,
 			struct smc_result *res);
 
+void smc_rpv_get(unsigned long rd_addr,
+			struct smc_result *res);
+	
 unsigned long smc_rtt_create(unsigned long rd_addr,
 			     unsigned long rtt_addr,
 			     unsigned long map_addr,
