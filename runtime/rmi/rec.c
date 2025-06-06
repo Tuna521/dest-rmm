@@ -431,7 +431,7 @@ void smc_rec_aux_count(unsigned long rd_addr, struct smc_result *res)
 
 void smc_rpv_get(unsigned long rd_addr, struct smc_result *res)
 {
-	uint64_t first_rpv_word;
+	uint64_t first_rpv_word = 0;
 	struct granule *g_rd;
 	struct rd *rd;
 
@@ -449,8 +449,14 @@ void smc_rpv_get(unsigned long rd_addr, struct smc_result *res)
 		printf("%02X ", rd->rpv[i]);
 	}
 	printf("\n");
-	(void)memcpy(&first_rpv_word, rd->rpv, sizeof(uint64_t));
 
+	// for (int i = 0; i < 8; ++i) {
+	// 	first_rpv_word |= ((uint64_t)rd->rpv[i]) << (8 * i);
+	// 	printf("%02X ", rd->rpv[i]);
+	// }
+	// printf("\n");
+	// printf("first_rpv_word: %lx\n", first_rpv_word);
+	// (void)memcpy(&first_rpv_word, rd->rpv, sizeof(uint64_t));
 
 	buffer_unmap(rd);
 	granule_unlock(g_rd);
