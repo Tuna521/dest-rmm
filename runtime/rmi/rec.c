@@ -450,10 +450,10 @@ void smc_rpv_get(unsigned long rd_addr, struct smc_result *res)
 	}
 	printf("\n");
 
-	// for (int i = 0; i < 8; ++i) {
-	// 	first_rpv_word |= ((uint64_t)rd->rpv[i]) << (8 * i);
-	// 	printf("%02X ", rd->rpv[i]);
-	// }
+	for (int i = 0; i < 8; ++i) {
+		first_rpv_word |= ((uint64_t)rd->rpv[i]) << (8 * i);
+		printf("%02X ", rd->rpv[i]);
+	}
 	// printf("\n");
 	// printf("first_rpv_word: %lx\n", first_rpv_word);
 	// (void)memcpy(&first_rpv_word, rd->rpv, sizeof(uint64_t));
