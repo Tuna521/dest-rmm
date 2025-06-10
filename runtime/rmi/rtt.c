@@ -1150,6 +1150,8 @@ unsigned long smc_data_destroy_all(unsigned long rd_addr)
 
 	// Map RD
 	rd = granule_map(g_rd, SLOT_RD);
+	set_rd_state(rd, REALM_STATE_SYSTEM_OFF);
+
 	if (rd == NULL) {
 		INFO("Failed to map RD granule\n");
 		granule_unlock(g_rd);
